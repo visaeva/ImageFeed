@@ -14,9 +14,10 @@ final class SingleImageViewController: UIViewController {
             rescaleAndCenterImageInScrollView(image: image)
         }
     }
-    @IBOutlet weak var scrollView: UIScrollView!
     
-    @IBOutlet var imageView: UIImageView!
+    @IBOutlet private weak var scrollView: UIScrollView!
+    
+    @IBOutlet private var imageView: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,11 +28,11 @@ final class SingleImageViewController: UIViewController {
         rescaleAndCenterImageInScrollView(image: image)
     }
     
-    @IBAction func didTapBackButton(_ sender: UIButton) {
+    @IBAction private func didTapBackButton(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func didTapShareButton(_ sender: UIButton) {
+    @IBAction private func didTapShareButton(_ sender: UIButton) {
         let share = UIActivityViewController(
             activityItems: [image],
             applicationActivities: nil
@@ -61,7 +62,6 @@ extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView
     }
-    
     func scrollViewDidZoom(_ scrollView: UIScrollView) { //изобр-е остается по центру после зумирования
         let imageViewSize = imageView.frame.size
         let scrollViewSize = scrollView.bounds.size

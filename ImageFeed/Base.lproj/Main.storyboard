@@ -130,8 +130,8 @@
                         </tabBarAppearance>
                     </tabBar>
                     <connections>
-                        <segue destination="jke-G0-ds1" kind="relationship" relationship="viewControllers" id="pA6-fz-Iwd"/>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="f8y-zs-GFU"/>
+                        <segue destination="jke-G0-ds1" kind="relationship" relationship="viewControllers" id="JQ2-Hl-eyv"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r2o-uk-Mgb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -178,7 +178,11 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mcs-RJ-oK7">
-                                <rect key="frame" x="171.66666666666666" y="766" width="50" height="50"/>
+                                <rect key="frame" x="171.66666666666666" y="751" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="OYY-yn-J42"/>
+                                    <constraint firstAttribute="height" constant="50" id="fat-ZZ-7eO"/>
+                                </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="share_button"/>
                                 <connections>
@@ -194,7 +198,7 @@
                             <constraint firstItem="abb-Xo-MmK" firstAttribute="leading" secondItem="hlZ-D5-fuU" secondAttribute="leading" constant="8" id="5IE-B2-NPF"/>
                             <constraint firstAttribute="bottom" secondItem="aM9-ac-OUp" secondAttribute="bottom" id="Qzr-1Q-QFZ"/>
                             <constraint firstItem="abb-Xo-MmK" firstAttribute="top" secondItem="hlZ-D5-fuU" secondAttribute="top" constant="8" id="lFH-bI-dSz"/>
-                            <constraint firstItem="hlZ-D5-fuU" firstAttribute="bottom" secondItem="mcs-RJ-oK7" secondAttribute="bottom" constant="36" id="nTX-3d-Pj4"/>
+                            <constraint firstItem="hlZ-D5-fuU" firstAttribute="bottom" secondItem="mcs-RJ-oK7" secondAttribute="bottom" constant="51" id="nTX-3d-Pj4"/>
                             <constraint firstItem="aM9-ac-OUp" firstAttribute="leading" secondItem="hlZ-D5-fuU" secondAttribute="leading" id="nqz-ii-sy7"/>
                             <constraint firstItem="mcs-RJ-oK7" firstAttribute="centerX" secondItem="hlZ-D5-fuU" secondAttribute="centerX" id="yjn-2e-lnW"/>
                         </constraints>
