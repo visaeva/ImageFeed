@@ -14,19 +14,18 @@ final class ProfileViewController: UIViewController {
     private var nameLabel = UILabel()
     private var descriptionLabel = UILabel()
     private var userNameLabel = UILabel()
-    private var profileImage = UIImage()
+    private var profileImage = UIImage(named:"Avatar")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        views()
-        constraintsSetup()
+        setupViews()
+        setupConstraints()
         
         view.backgroundColor = UIColor(named: "YP Black")
     }
     
-    private func views() {
-        let profileImage = UIImage(named: "Avatar")
+    private func setupViews() {
         avatarImageView.image = profileImage
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(avatarImageView)
@@ -56,7 +55,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(descriptionLabel)
     }
     
-    private func constraintsSetup() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             avatarImageView.widthAnchor.constraint(equalToConstant: 70),
             avatarImageView.heightAnchor.constraint(equalToConstant: 70),
