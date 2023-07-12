@@ -35,7 +35,6 @@ extension AuthViewController: WebViewViewControllerDelegate {
             
             switch result {
             case .success(let authToken):
-                print("Полученный токен: \(authToken)")
                 OAuth2TokenStorage.shared.token = authToken
             case .failure(let error):
                 print("Ошибка получения токена: \(error)")
