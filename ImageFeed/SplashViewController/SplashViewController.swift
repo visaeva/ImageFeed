@@ -40,7 +40,8 @@ final class SplashViewController: UIViewController {
     
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
-            fatalError("Invalid Configuration")
+            assertionFailure("Invalid Configuration")
+            return
         }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
@@ -64,7 +65,7 @@ final class SplashViewController: UIViewController {
         )
         let action = UIAlertAction(title: "Ок", style: .cancel) { [weak self] _ in
             guard let self else { return }
-            switchToAuthViewController()
+            self.switchToAuthViewController()
         }
         alert.addAction(action)
         present(alert, animated: true)
@@ -102,13 +103,12 @@ extension SplashViewController: AuthViewControllerDelegate {
                 
                 completion(.success(token))
                 self.fetchProfile(token: token)
+                UIBlockingProgressHUD.dismiss()
                 
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 completion(.failure(error))
-                DispatchQueue.main.async {
                     self.showErrorAlert()
-                }
             }
         }
     }
@@ -119,14 +119,13 @@ extension SplashViewController: AuthViewControllerDelegate {
             guard let self else { return }
             switch result {
             case .success(let profile):
-                ProfileImageService.shared.fetchProfileImageURL(userName: profile.userName ?? " ") { _ in }
-                self.switchToTabBarController()
-                UIBlockingProgressHUD.dismiss()
-                
+                ProfileImageService.shared.fetchProfileImageURL(userName: profile.userName ?? " ") { [weak self] _ in
+                    self?.switchToTabBarController()
+                }
             case .failure:
-                UIBlockingProgressHUD.dismiss()
                 self.showErrorAlert()
             }
+            UIBlockingProgressHUD.dismiss()
         }
     }
     
@@ -136,7 +135,7 @@ extension SplashViewController: AuthViewControllerDelegate {
         view.addSubview(splashImage)
         
         NSLayoutConstraint.activate([
-            splashImage.widthAnchor.constraint(equalToConstant: 73),
+            splashImage.widthAnchor.constraint(equalToConstant: 72.5),
             splashImage.heightAnchor.constraint(equalToConstant: 75),
             splashImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             splashImage.centerYAnchor.constraint(equalTo: view.centerYAnchor)])

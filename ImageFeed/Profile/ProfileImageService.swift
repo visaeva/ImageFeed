@@ -11,7 +11,7 @@ final class ProfileImageService {
     static let shared = ProfileImageService()
     private (set) var avatarURL: String?
     private var fetchProfileImageTask: URLSessionTask?
-    static let DidChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     private let tokenStorage: OAuth2TokenStorage
     private let urlSession = URLSession.shared
     
@@ -35,7 +35,10 @@ final class ProfileImageService {
             assertionFailure("Failed to make HTTP request")
             return
         }
-        let baseURL = URL(string: "https://api.unsplash.com/")!
+        guard let baseURL = URL(string: "https://api.unsplash.com/") else {
+            assertionFailure("Ошибка при создании базового URL")
+            return
+        }
         let url = baseURL.appendingPathComponent("/users/\(userName)")
         
         var request = URLRequest(url: url)
@@ -48,7 +51,7 @@ final class ProfileImageService {
             switch response{
             case .success(let result):
                 completion(.success(result.profile_image.large))
-                NotificationCenter.default.post(name:ProfileImageService.DidChangeNotification,
+                NotificationCenter.default.post(name:ProfileImageService.didChangeNotification,
                                                 object:self,
                                                 userInfo: ["URL": result.profile_image.large])
                 self?.avatarURL = result.profile_image.large

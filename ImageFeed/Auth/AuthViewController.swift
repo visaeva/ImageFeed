@@ -14,7 +14,6 @@ protocol AuthViewControllerDelegate: AnyObject {
 final class AuthViewController: UIViewController {
     private let webViewIdentifier = "ShowWebView"
     static let storyboardID = "AuthViewController"
-    
     weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
@@ -26,7 +25,9 @@ final class AuthViewController: UIViewController {
         if segue.identifier == webViewIdentifier {
             guard let webViewViewController = segue.destination as? WebViewViewController
             else {
-                fatalError("Failed to prepare for \(webViewIdentifier)") }
+                assertionFailure("Failed to prepare for \(webViewIdentifier)")
+                return
+            }
             webViewViewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)

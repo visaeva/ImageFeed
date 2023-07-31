@@ -47,10 +47,10 @@ final class WebViewViewController: UIViewController {
         return .darkContent
     }
     
-    
     private func makeRequest() {
         guard var urlComponents = URLComponents(string: UnsplashAuthorizeURLString) else {
-            fatalError("Incorrect base URL")
+            assertionFailure("Incorrect base URL")
+            return
         }
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: AccessKey),
@@ -59,7 +59,8 @@ final class WebViewViewController: UIViewController {
             URLQueryItem(name: "scope", value: AccessScope)
         ]
         guard let url = urlComponents.url else {
-            fatalError("Fail to make URL")
+            assertionFailure("Fail to make URL")
+            return
         }
         
         let request = URLRequest(url: url)

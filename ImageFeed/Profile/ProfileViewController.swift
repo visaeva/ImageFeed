@@ -28,7 +28,7 @@ final class ProfileViewController: UIViewController {
         
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
-                forName: ProfileImageService.DidChangeNotification,
+                forName: ProfileImageService.didChangeNotification,
                 object: nil,
                 queue: .main
             ) { [ weak self ] _ in
@@ -61,7 +61,7 @@ final class ProfileViewController: UIViewController {
                                     options: [.processor(processor), .transition(.fade(1))])
     }
     
-    func updateProfileDetails(profile: ProfileService.Profile?) {
+    func updateProfileDetails(profile: Profile?) {
         if let profile = profile {
             nameLabel.text = profile.name
             userNameLabel.text = profile.loginName

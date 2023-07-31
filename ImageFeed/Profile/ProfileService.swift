@@ -13,27 +13,6 @@ final class ProfileService {
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
     
-    struct ProfileResult: Codable {
-        var userName:String?
-        var firstName: String?
-        var lastName: String?
-        var bio: String?
-        
-        private enum CodingKeys: String, CodingKey {
-            case userName = "username"
-            case firstName = "first_name"
-            case lastName = "last_name"
-            case bio
-        }
-    }
-    
-    struct Profile {
-        var userName: String?
-        var name: String?
-        var loginName: String?
-        var bio: String?
-    }
-    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         task?.cancel()
         if task != nil {
