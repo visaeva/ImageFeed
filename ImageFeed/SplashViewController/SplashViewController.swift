@@ -21,6 +21,7 @@ final class SplashViewController: UIViewController {
         
         setupSplashConstraints()
         view.backgroundColor = UIColor(named: "YP Black")
+       // guard UIBlockingProgressHUD.isShowing == false else { return }
         
         if let token = oauth2TokenStorage.token {
             fetchProfile(token: token)

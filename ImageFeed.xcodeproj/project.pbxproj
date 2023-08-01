@@ -15,6 +15,7 @@
 		4C2D8D292A20F20700423B88 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C2D8D272A20F20700423B88 /* LaunchScreen.storyboard */; };
 		4C2D8D312A23DEEE00423B88 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2D8D302A23DEEE00423B88 /* ImagesListCell.swift */; };
 		4C7590202A349D64007B9F3C /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C75901F2A349D64007B9F3C /* ProfileViewController.swift */; };
+		4C7A70F62A790CBB003823CC /* ImagesListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7A70F52A790CBB003823CC /* ImagesListService.swift */; };
 		4C85F2DE2A5F0EB4002EA2C1 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 4C85F2DD2A5F0EB4002EA2C1 /* ProgressHUD */; };
 		4C85F2E02A602FC7002EA2C1 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C85F2DF2A602FC7002EA2C1 /* UIBlockingProgressHUD.swift */; };
 		4C85F2E22A617218002EA2C1 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C85F2E12A617217002EA2C1 /* ProfileService.swift */; };
@@ -44,6 +45,7 @@
 		4C2D8D2A2A20F20700423B88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C2D8D302A23DEEE00423B88 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		4C75901F2A349D64007B9F3C /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		4C7A70F52A790CBB003823CC /* ImagesListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListService.swift; sourceTree = "<group>"; };
 		4C85F2DF2A602FC7002EA2C1 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		4C85F2E12A617217002EA2C1 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		4C85F2E32A63FE39002EA2C1 /* ProfileImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageService.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			children = (
 				4C2D8D302A23DEEE00423B88 /* ImagesListCell.swift */,
 				4C2D8D202A20F20400423B88 /* ImagesListViewController.swift */,
+				4C7A70F52A790CBB003823CC /* ImagesListService.swift */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 				4C2D8D1D2A20F20400423B88 /* AppDelegate.swift in Sources */,
 				4CA6534E2A54434500E86B57 /* WebViewViewController.swift in Sources */,
 				4CA653512A56ED9400E86B57 /* OAuth2Service.swift in Sources */,
+				4C7A70F62A790CBB003823CC /* ImagesListService.swift in Sources */,
 				4C85F2E42A63FE39002EA2C1 /* ProfileImageService.swift in Sources */,
 				4C2D8D1F2A20F20400423B88 /* SceneDelegate.swift in Sources */,
 				4C878DBE2A77B56100C60D9D /* ProfileModels.swift in Sources */,

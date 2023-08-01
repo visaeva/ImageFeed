@@ -1,5 +1,5 @@
 //
-//  ProfileStruct.swift
+//  ProfileModels.swift
 //  ImageFeed
 //
 //  Created by Victoria Isaeva on 31.07.2023.
