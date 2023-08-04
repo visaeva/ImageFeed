@@ -9,20 +9,28 @@ import UIKit
 import ProgressHUD
 
 final class UIBlockingProgressHUD {
-   // static var isShowing: Bool = false
+    static var isShowing: Bool = false
+    
     private static var window: UIWindow? {
         return UIApplication.shared.windows.first
     }
     
     static func show() {
-     //   isShowing = true
+        isShowing = true
         window?.isUserInteractionEnabled = false
         ProgressHUD.show()
     }
     
     static func dismiss() {
-      //  isShowing = false
+        isShowing = false
         window?.isUserInteractionEnabled = true
         ProgressHUD.dismiss()
+    }
+    
+    static func showTab() {
+        window?.isUserInteractionEnabled = false
+    }
+    static func dismissTab() {
+        window?.isUserInteractionEnabled = true
     }
 }

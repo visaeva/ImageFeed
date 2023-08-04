@@ -13,6 +13,15 @@ final class OAuth2Service {
     private var task: URLSessionTask?
     private var lastCode: String?
     
+    private (set) var authToken: String? {
+        get {
+            return OAuth2TokenStorage().token
+        }
+        set {
+            OAuth2TokenStorage().token = newValue
+        }
+    }
+    
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         if task != nil {
@@ -51,7 +60,7 @@ final class OAuth2Service {
     private func authTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
             assertionFailure("Некорректный базовый URL")
-                   return nil
+            return nil
         }
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: AccessKey),

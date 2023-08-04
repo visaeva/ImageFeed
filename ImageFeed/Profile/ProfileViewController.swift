@@ -67,7 +67,7 @@ final class ProfileViewController: UIViewController {
             userNameLabel.text = profile.loginName
             descriptionLabel.text = profile.bio
         } else {
-            print("Ошибка profile не найден")
+            print("Error profile not found")
         }
     }
     
@@ -128,15 +128,25 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private  func didTapBackButton() {
-        for view in view.subviews {
-            if view is UILabel {
-                view.removeFromSuperview()
+        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
+        
+        let yesAction = UIAlertAction(title: "Да", style: .default) { _ in
+            OAuth2TokenStorage.shared.clean()
+            WebViewViewController.clean()
+            ImagesListCell.clean()
+            
+            guard let window = UIApplication.shared.windows.first else {
+                fatalError("invalid configuration")
             }
+            window.rootViewController = SplashViewController()
+            window.makeKeyAndVisible()
         }
-    }
-    deinit {
-        if let observer = profileImageServiceObserver {
-            NotificationCenter.default.removeObserver(observer)
+        
+        let noAction = UIAlertAction(title: "Нет", style: .default) { _ in
+            alert.dismiss(animated: true)
         }
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        present(alert, animated: true)
     }
 }

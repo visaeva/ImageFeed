@@ -8,13 +8,8 @@
 import UIKit
 
 final class SingleImageViewController: UIViewController {
-    var image: UIImage! {
-        didSet {
-            guard isViewLoaded else { return }
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
-        }
-    }
+    var image: URL?
+    var imageDownload: UIImage?
     
     @IBOutlet private weak var scrollView: UIScrollView!
     
@@ -22,11 +17,9 @@ final class SingleImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageView.image = image
-        
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
-        rescaleAndCenterImageInScrollView(image: image)
+        loadAndShowImage(url: image)
     }
     
     @IBAction private func didTapBackButton(_ sender: UIButton) {
@@ -34,28 +27,65 @@ final class SingleImageViewController: UIViewController {
     }
     
     @IBAction private func didTapShareButton(_ sender: UIButton) {
-        let share = UIActivityViewController(
-            activityItems: [image],
-            applicationActivities: nil
-        )
-        present(share, animated: true, completion: nil)
+        showShareActivityController()
     }
     
-    private func rescaleAndCenterImageInScrollView(image: UIImage) {
-        let minZoomScale = scrollView.minimumZoomScale
-        let maxZoomScale = scrollView.maximumZoomScale
-        view.layoutIfNeeded()
-        let visibleRectSize = scrollView.bounds.size
-        let imageSize = image.size
-        let hScale = visibleRectSize.width / imageSize.width
-        let vScale = visibleRectSize.height / imageSize.height
-        let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
-        scrollView.setZoomScale(scale, animated: false)
-        scrollView.layoutIfNeeded()
-        let newContentSize = scrollView.contentSize
-        let x = (newContentSize.width - visibleRectSize.width) / 2
-        let y = (newContentSize.height - visibleRectSize.height) / 2
-        scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
+    func loadAndShowImage(url: URL?) {
+        guard let url = url else { return }
+        UIBlockingProgressHUD.show()
+        
+        imageView.kf.setImage(with: url) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self else { return }
+            
+            switch result {
+            case .success(let imageResult):
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+                self.imageDownload = imageResult.image
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                self.showError(url: url)
+            }
+        }
+    }
+    
+    func compressImage(_ image: UIImage) -> UIImage {
+        let targetSizeInMB: Double = 10.0
+        let maxCompressionIterations = 5
+        
+        var compressedImage = image
+        var currentSizeInMB = Double(compressedImage.pngData()?.count ?? 0) / (1024.0 * 1024.0)
+        var iteration = 0
+        
+        while currentSizeInMB > targetSizeInMB && iteration < maxCompressionIterations {
+            let compressionRatio: CGFloat = CGFloat(targetSizeInMB / currentSizeInMB)
+            let newWidth = Int(compressedImage.size.width * sqrt(compressionRatio))
+            let newHeight = Int(compressedImage.size.height * sqrt(compressionRatio))
+            let newImageSize = CGSize(width: newWidth, height: newHeight)
+            
+            UIGraphicsBeginImageContext(newImageSize)
+            compressedImage.draw(in: CGRect(origin: .zero, size: newImageSize))
+            if let resizedImage = UIGraphicsGetImageFromCurrentImageContext() {
+                compressedImage = resizedImage
+                currentSizeInMB = Double(compressedImage.pngData()?.count ?? 0) / (1024.0 * 1024.0)
+            }
+            UIGraphicsEndImageContext()
+            iteration += 1
+        }
+        self.imageDownload = compressedImage
+        return compressedImage
+    }
+    
+    func showShareActivityController() {
+        guard let imageDownload = imageDownload else { return }
+        
+        let share = UIActivityViewController(
+            activityItems: [compressImage(imageDownload)],
+            applicationActivities: nil
+        )
+        share.overrideUserInterfaceStyle = .dark
+        present(share, animated: true, completion: nil)
     }
 }
 
@@ -71,4 +101,40 @@ extension SingleImageViewController: UIScrollViewDelegate {
         
         scrollView.contentInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: verticalPadding, right: horizontalPadding)
     }
+    private func rescaleAndCenterImageInScrollView(image: UIImage) {
+        let minZoomScale = scrollView.minimumZoomScale
+        let maxZoomScale = scrollView.maximumZoomScale
+        scrollView.layoutIfNeeded()
+        let visibleRectSize = scrollView.bounds.size
+        let imageSize = image.size
+        let hScale = visibleRectSize.width / imageSize.width
+        let vScale = visibleRectSize.height / imageSize.height
+        let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
+        scrollView.setZoomScale(scale, animated: false)
+        scrollView.layoutIfNeeded()
+        let newContentSize = scrollView.contentSize
+        let x = (newContentSize.width - visibleRectSize.width) / 2
+        let y = (newContentSize.height - visibleRectSize.height) / 2
+        scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
+    }
 }
+
+
+extension SingleImageViewController {
+    private func showError(url: URL) {
+        let alert = UIAlertController(title: "Что-то пошло не так.", message: "Попробовать ещё раз?", preferredStyle: .alert)
+        let repeats = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.loadAndShowImage(url: url)
+        }
+        let cancel = UIAlertAction(title: "Не надо", style: .cancel) { _ in
+            alert.dismiss(animated: true)
+        }
+        
+        alert.addAction(cancel)
+        alert.addAction(repeats)
+        
+        present(alert, animated: true)
+    }
+}
+
