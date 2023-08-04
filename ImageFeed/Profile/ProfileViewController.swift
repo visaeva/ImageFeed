@@ -6,23 +6,69 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
-    
-    private var exitButton = UIButton()
     private var avatarImageView = UIImageView()
     private var nameLabel = UILabel()
     private var descriptionLabel = UILabel()
     private var userNameLabel = UILabel()
     private var profileImage = UIImage(named:"Avatar")
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
         setupConstraints()
+        updateProfileDetails(profile: profileService.profile)
         
         view.backgroundColor = UIColor(named: "YP Black")
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [ weak self ] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
+    }
+    
+    private let exitButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(named: "exit")
+        button.setImage(image, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private func updateAvatar() {
+        guard let profileImage = ProfileImageService.shared.avatarURL,
+              let url = URL(string: profileImage)
+        else { return }
+        let cache = ImageCache.default
+        cache.clearDiskCache()
+        
+        avatarImageView.kf.setImage(with: url)
+        let processor = RoundCornerImageProcessor(cornerRadius: 42)
+        
+        avatarImageView.kf.setImage(with: url,
+                                    placeholder: UIImage(named: "placeholder"),
+                                    options: [.processor(processor), .transition(.fade(1))])
+    }
+    
+    func updateProfileDetails(profile: Profile?) {
+        if let profile = profile {
+            nameLabel.text = profile.name
+            userNameLabel.text = profile.loginName
+            descriptionLabel.text = profile.bio
+        } else {
+            print("Ошибка profile не найден")
+        }
     }
     
     private func setupViews() {
@@ -86,6 +132,11 @@ final class ProfileViewController: UIViewController {
             if view is UILabel {
                 view.removeFromSuperview()
             }
+        }
+    }
+    deinit {
+        if let observer = profileImageServiceObserver {
+            NotificationCenter.default.removeObserver(observer)
         }
     }
 }

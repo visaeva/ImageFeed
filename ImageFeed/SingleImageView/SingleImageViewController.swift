@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 final class SingleImageViewController: UIViewController {
     var image: UIImage! {
         didSet {
@@ -62,7 +63,7 @@ extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView
     }
-    func scrollViewDidZoom(_ scrollView: UIScrollView) { //изобр-е остается по центру после зумирования
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
         let imageViewSize = imageView.frame.size
         let scrollViewSize = scrollView.bounds.size
         let verticalPadding = imageViewSize.height < scrollViewSize.height ? (scrollViewSize.height - imageViewSize.height) / 2 : 0
