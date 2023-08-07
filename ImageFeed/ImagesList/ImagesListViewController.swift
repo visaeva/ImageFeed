@@ -11,9 +11,7 @@ final class ImagesListViewController: UIViewController {
     private let showSingleImageSegueIdentifire = "ShowSingleImage"
     private var imagesListServiceObserver: NSObjectProtocol?
     private let imagesListService = ImagesListService.shared
-    private var photos:[Photo] = []
-    
-    @IBOutlet private var tableView: UITableView!
+    private var photos: [Photo] = []
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
@@ -44,6 +42,8 @@ final class ImagesListViewController: UIViewController {
         tableView.delegate = self
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
+    
+    @IBOutlet private var tableView: UITableView!
 }
 
 extension ImagesListViewController: UITableViewDataSource {
@@ -61,7 +61,6 @@ extension ImagesListViewController: UITableViewDataSource {
         
         let photo = photos[indexPath.row]
         imageListCell.setupCell(from: photo)
-        //  tableView.reloadRows(at: [indexPath], with: .automatic)
         return imageListCell
     }
 }
@@ -100,7 +99,7 @@ extension ImagesListViewController {
                 let indexPaths = (oldCount..<newCount).map { i in
                     IndexPath(row: i, section: 0)
                 }
-                tableView.insertRows(at: indexPaths, with: .fade) //.automatic
+                tableView.insertRows(at: indexPaths, with: .fade)
             }completion: { _ in }
         }
     }
@@ -114,11 +113,11 @@ extension ImagesListViewController{
             .addObserver(
                 forName: ImagesListService.didChangeNotification,
                 object: nil,
-                queue: .main) { [weak self] _ in
-                    guard let self = self else { return }
-                    self.updateTableViewAnimated()
-                    print("Imagesnotific")
-                }
+                queue: .main
+            ) { [ weak self ] _ in
+                guard let self = self else { return }
+                self.updateTableViewAnimated()
+            }
     }
 }
 
@@ -127,22 +126,22 @@ extension ImagesListViewController: ImagesListCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
         
-        UIBlockingProgressHUD.showTab()
+        UIBlockingProgressHUD.show()
         
-        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [ weak self ] result in
             guard let self else { return }
             
             switch result {
             case .success:
                 self.photos = self.imagesListService.photos
                 cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
-                UIBlockingProgressHUD.dismissTab()
+                UIBlockingProgressHUD.dismiss()
                 
             case .failure(let error):
-                UIBlockingProgressHUD.dismissTab()
+                UIBlockingProgressHUD.dismiss()
                 let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так(", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "Ок", style: .default) { _ in
-                }
+                let okAction = UIAlertAction(title: "Ок", style: .default)
+                
                 alert.addAction(okAction)
                 present(alert, animated: true)
                 print(error.localizedDescription)

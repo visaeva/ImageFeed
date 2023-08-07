@@ -19,14 +19,6 @@ final class ProfileImageService {
         tokenStorage = OAuth2TokenStorage.shared
     }
     
-    struct UserResult: Codable {
-        let profile_image: ProfileImage
-    }
-    
-    struct ProfileImage: Codable {
-        let large: String
-    }
-    
     func fetchProfileImageURL(userName: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         fetchProfileImageTask?.cancel()
@@ -45,14 +37,14 @@ final class ProfileImageService {
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
-        fetchProfileImageTask = urlSession.objectTask(for: request) { [ weak self ] (response:Result<UserResult, Error>) in
+        fetchProfileImageTask = urlSession.objectTask(for: request) { [ weak self ] (response: Result<UserResult, Error>) in
             defer { self?.fetchProfileImageTask = nil }
             
             switch response{
             case .success(let result):
                 completion(.success(result.profile_image.large))
-                NotificationCenter.default.post(name:ProfileImageService.didChangeNotification,
-                                                object:self,
+                NotificationCenter.default.post(name: ProfileImageService.didChangeNotification,
+                                                object: self,
                                                 userInfo: ["URL": result.profile_image.large])
                 self?.avatarURL = result.profile_image.large
                 

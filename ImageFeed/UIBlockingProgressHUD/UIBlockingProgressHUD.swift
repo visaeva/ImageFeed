@@ -26,11 +26,4 @@ final class UIBlockingProgressHUD {
         window?.isUserInteractionEnabled = true
         ProgressHUD.dismiss()
     }
-    
-    static func showTab() {
-        window?.isUserInteractionEnabled = false
-    }
-    static func dismissTab() {
-        window?.isUserInteractionEnabled = true
-    }
 }

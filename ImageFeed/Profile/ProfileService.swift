@@ -13,37 +13,6 @@ final class ProfileService {
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
     
-    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
-        task?.cancel()
-        if task != nil {
-            return
-        }
-        guard let request = profileRequest(token:token) else {
-            assertionFailure("Invalid request")
-            completion(.failure(NetworkError.invalidRequest))
-            return
-        }
-        let task = urlSession.objectTask(for:request) { [ weak self ] (response:Result<ProfileResult, Error>) in
-            self?.task = nil
-            switch response {
-            case .success(let profileResult):
-                let profile = self?.loadProfile(from: profileResult)
-                
-                self?.profile = profile
-                
-                if let profile = profile {
-                    completion(.success(profile))
-                } else {
-                    completion(.failure(NetworkError.invalidResponse))
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-        self.task = task
-        task.resume()
-    }
-    
     private func loadProfile(from result: ProfileResult) -> Profile {
         let name = "\(result.firstName ?? "") \(result.lastName ?? "")"
         let  loginName = "@\(result.userName ?? "")"
@@ -66,6 +35,37 @@ final class ProfileService {
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
         return request
+    }
+    
+    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+        task?.cancel()
+        if task != nil {
+            return
+        }
+        guard let request = profileRequest(token: token) else {
+            assertionFailure("Invalid request")
+            completion(.failure(NetworkError.invalidRequest))
+            return
+        }
+        let task = urlSession.objectTask(for: request) { [ weak self ] (response: Result<ProfileResult, Error>) in
+            self?.task = nil
+            switch response {
+            case .success(let profileResult):
+                let profile = self?.loadProfile(from: profileResult)
+                
+                self?.profile = profile
+                
+                if let profile = profile {
+                    completion(.success(profile))
+                } else {
+                    completion(.failure(NetworkError.invalidResponse))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        self.task = task
+        task.resume()
     }
 }
 

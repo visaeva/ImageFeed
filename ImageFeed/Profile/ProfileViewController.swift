@@ -58,17 +58,8 @@ final class ProfileViewController: UIViewController {
         
         avatarImageView.kf.setImage(with: url,
                                     placeholder: UIImage(named: "placeholder"),
-                                    options: [.processor(processor), .transition(.fade(1))])
-    }
-    
-    func updateProfileDetails(profile: Profile?) {
-        if let profile = profile {
-            nameLabel.text = profile.name
-            userNameLabel.text = profile.loginName
-            descriptionLabel.text = profile.bio
-        } else {
-            print("Error profile not found")
-        }
+                                    options: [.processor(processor),
+                                              .transition(.fade(1))])
     }
     
     private func setupViews() {
@@ -126,6 +117,16 @@ final class ProfileViewController: UIViewController {
             descriptionLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor)])
     }
     
+    func updateProfileDetails(profile: Profile?) {
+        if let profile = profile {
+            nameLabel.text = profile.name
+            userNameLabel.text = profile.loginName
+            descriptionLabel.text = profile.bio
+        } else {
+            print("Error profile not found")
+        }
+    }
+    
     @objc
     private  func didTapBackButton() {
         let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
@@ -133,10 +134,11 @@ final class ProfileViewController: UIViewController {
         let yesAction = UIAlertAction(title: "Да", style: .default) { _ in
             OAuth2TokenStorage.shared.clean()
             WebViewViewController.clean()
-            ImagesListCell.clean()
+            CleanCache.clean()
             
             guard let window = UIApplication.shared.windows.first else {
-                fatalError("invalid configuration")
+                assertionFailure("invalid configuration")
+                return
             }
             window.rootViewController = SplashViewController()
             window.makeKeyAndVisible()

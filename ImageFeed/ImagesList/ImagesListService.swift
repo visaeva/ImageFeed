@@ -7,72 +7,31 @@
 
 import Foundation
 
-struct Photo: Codable {
-    let id: String
-    let size: CGSize
-    let createdAt: Date?
-    let welcomeDescription: String?
-    let thumbImageURL: String
-    let largeImageURL: String
-    let regularImageURL:String
-    let smallImageURL:String
-    let isLiked: Bool
-    
-    init(_ photoResult: PhotoResult, date: ISO8601DateFormatter) {
-        self.id = photoResult.id
-        self.size = CGSize(width: photoResult.width, height: photoResult.height)
-        self.createdAt = date.date(from: photoResult.createdAt ?? "")
-        self.welcomeDescription = photoResult.description
-        self.thumbImageURL = photoResult.urls.thumb
-        self.largeImageURL = photoResult.urls.full
-        self.regularImageURL = photoResult.urls.regular
-        self.smallImageURL = photoResult.urls.small
-        self.isLiked = photoResult.likedByUser ?? false
-    }
-}
-
-struct PhotoResult: Decodable {
-    let id: String
-    let width: Int
-    let height: Int
-    let createdAt: String?
-    let description: String?
-    let urls: UrlsResult
-    let likedByUser: Bool?
-}
-
-struct UrlsResult: Decodable {
-    let full: String
-    let regular: String
-    let small: String
-    let thumb: String
-}
-
-struct PhotoLiked:Decodable {
-    let photo: PhotoResult
-}
-
 final class ImagesListService {
-    static let shared = ImagesListService()
-    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     private (set) var photos: [Photo] = []
     private var currentTask: URLSessionTask?
-    private var lastLoadedPage:Int?
+    private var lastLoadedPage: Int?
     private let urlSession = URLSession.shared
     private let dateFormatter = ISO8601DateFormatter()
+    private var page: Int = 1
+    static let shared = ImagesListService()
+    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+    
+    private init() {}
     
     func fetchPhotosNextPage() {
         assert(Thread.isMainThread)
         
         guard currentTask == nil else { return }
         let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
+        page = nextPage
         
         guard let authToken = OAuth2TokenStorage.shared.token else {
             assertionFailure("Failed to make HTTP request")
             return
         }
         
-        guard let request = makeRequest(authToken: authToken,page: nextPage) else {
+        guard let request = makeRequest(authToken: authToken, page: nextPage) else {
             return
         }
         
@@ -84,12 +43,12 @@ final class ImagesListService {
                     if self.lastLoadedPage == nil {
                         self.lastLoadedPage = 1
                     } else {
-                        self.lastLoadedPage!+=1
+                        self.lastLoadedPage! += 1
                     }
                     let newPhotos = photoResults.map { Photo($0, date: self.dateFormatter) }
                     self.photos.append(contentsOf: newPhotos)
                     
-                    NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object:nil)
+                    NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: nil)
                     
                 case .failure(let error):
                     print(error.localizedDescription)
@@ -101,7 +60,7 @@ final class ImagesListService {
         task.resume()
     }
     
-    func changeLike(photoId: String, isLike:Bool, _ completion: @escaping(Result<Void, Error>)->Void){
+    func changeLike(photoId: String, isLike:Bool, _ completion: @escaping(Result<Void, Error>)->Void) {
         if currentTask != nil {
             currentTask?.cancel()
         }
@@ -109,14 +68,22 @@ final class ImagesListService {
         guard let request = likeRequest(photoId: photoId, isLike: isLike) else {
             return
         }
-        let task = urlSession.objectTask(for: request) { (result:Result<PhotoLiked, Error>) in
+        let task = urlSession.objectTask(for: request) { (result: Result<PhotoLiked, Error>) in
             DispatchQueue.main.async {
                 switch result {
                 case .success:
                     if let index = self.photos.firstIndex(where: {$0.id == photoId}) {
                         let photo = self.photos[index]
                         
-                        let newPhotoResult = PhotoResult(id:photo.id, width:Int(photo.size.width), height:Int(photo.size.height), createdAt: photo.createdAt?.description, description: photo.welcomeDescription, urls: UrlsResult(full:photo.largeImageURL, regular:photo.regularImageURL, small: photo.smallImageURL, thumb:photo.thumbImageURL), likedByUser:!photo.isLiked)
+                        let newPhotoResult = PhotoResult(id: photo.id,
+                                                         width: Int(photo.size.width),
+                                                         height: Int(photo.size.height),
+                                                         createdAt: photo.createdAt?.description,
+                                                         description: photo.welcomeDescription,
+                                                         urls: UrlsResult(full: photo.largeImageURL, regular: photo.regularImageURL,
+                                                                          small: photo.smallImageURL, thumb: photo.thumbImageURL
+                                                                         ),
+                                                         likedByUser: !photo.isLiked)
                         
                         let newPhoto = Photo(newPhotoResult, date: self.dateFormatter)
                         
@@ -132,7 +99,7 @@ final class ImagesListService {
         task.resume()
     }
     
-    private func makeRequest(authToken: String,page: Int) -> URLRequest? {
+    private func makeRequest(authToken: String, page: Int) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://api.unsplash.com/photos") else {
             assertionFailure("Error with URL")
             return nil

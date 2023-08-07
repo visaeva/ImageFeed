@@ -16,15 +16,8 @@ final class ImagesListCell: UITableViewCell {
     weak var delegate: ImagesListCellDelegate?
     static let reuseIdentifier = "ImagesListCell"
     
-    @IBOutlet var cellImage: UIImageView!
-    @IBOutlet var likeButton: UIButton!
-    @IBOutlet var dateLabel: UILabel!
-    
-    @IBAction func tapLikeButton(_ sender: UIButton) {
-        delegate?.imageListCellDidTapLike(self)
-    }
-    
     override func prepareForReuse() {
+        super.prepareForReuse()
         cellImage.kf.cancelDownloadTask()
     }
     
@@ -36,7 +29,7 @@ final class ImagesListCell: UITableViewCell {
         return formatter
     } ()
     
-    func setupCell(from photo:Photo) {
+    func setupCell(from photo: Photo) {
         
         let url = URL(string: photo.smallImageURL)
         cellImage.kf.indicatorType = .activity
@@ -62,12 +55,10 @@ final class ImagesListCell: UITableViewCell {
         likeButton.setImage(likeImage, for: .normal)
     }
     
-    static func clean() {
-        let cache = ImageCache.default
-        cache.clearMemoryCache()
-        cache.clearDiskCache()
-        cache.backgroundCleanExpiredDiskCache()
-        cache.cleanExpiredMemoryCache()
-        cache.clearCache()
+    @IBOutlet private var cellImage: UIImageView!
+    @IBOutlet private var likeButton: UIButton!
+    @IBOutlet private var dateLabel: UILabel!
+    @IBAction func tapLikeButton(_ sender: UIButton) {
+        delegate?.imageListCellDidTapLike(self)
     }
 }
