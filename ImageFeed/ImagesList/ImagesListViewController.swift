@@ -13,6 +13,8 @@ final class ImagesListViewController: UIViewController {
     private let imagesListService = ImagesListService.shared
     private var photos: [Photo] = []
     
+    @IBOutlet private var tableView: UITableView!
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
@@ -42,8 +44,6 @@ final class ImagesListViewController: UIViewController {
         tableView.delegate = self
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
-    
-    @IBOutlet private var tableView: UITableView!
 }
 
 extension ImagesListViewController: UITableViewDataSource {

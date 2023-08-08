@@ -8,14 +8,14 @@
 import Foundation
 
 final class ImagesListService {
+    static let shared = ImagesListService()
+    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     private (set) var photos: [Photo] = []
     private var currentTask: URLSessionTask?
     private var lastLoadedPage: Int?
     private let urlSession = URLSession.shared
     private let dateFormatter = ISO8601DateFormatter()
     private var page: Int = 1
-    static let shared = ImagesListService()
-    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
     private init() {}
     

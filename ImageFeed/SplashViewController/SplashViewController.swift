@@ -41,9 +41,24 @@ final class SplashViewController: UIViewController {
         .lightContent
     }
     
+    func showErrorAlert() {
+        let alert = UIAlertController(
+            title: "Что-то пошло не так",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(title: "Ок", style: .cancel) { [weak self] _ in
+            guard let self else { return }
+            self.switchToAuthViewController()
+        }
+        alert.addAction(action)
+        present(alert, animated: true)
+    }
+    
     private func setupViews() {
         view.addSubview(splashImage)
     }
+    
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
             assertionFailure("Invalid Configuration")
@@ -61,20 +76,6 @@ final class SplashViewController: UIViewController {
         authViewController.modalPresentationStyle = .fullScreen
         
         present(authViewController, animated: true)
-    }
-    
-    func showErrorAlert() {
-        let alert = UIAlertController(
-            title: "Что-то пошло не так",
-            message: "Не удалось войти в систему",
-            preferredStyle: .alert
-        )
-        let action = UIAlertAction(title: "Ок", style: .cancel) { [weak self] _ in
-            guard let self else { return }
-            self.switchToAuthViewController()
-        }
-        alert.addAction(action)
-        present(alert, animated: true)
     }
 }
 

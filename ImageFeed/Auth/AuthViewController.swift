@@ -12,9 +12,9 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-    private let webViewIdentifier = "ShowWebView"
     static let storyboardID = "AuthViewController"
     weak var delegate: AuthViewControllerDelegate?
+    private let webViewIdentifier = "ShowWebView"
     
     override func viewDidLoad() {
         super.viewDidLoad()

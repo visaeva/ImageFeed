@@ -38,6 +38,16 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
     
+    func updateProfileDetails(profile: Profile?) {
+        if let profile = profile {
+            nameLabel.text = profile.name
+            userNameLabel.text = profile.loginName
+            descriptionLabel.text = profile.bio
+        } else {
+            print("Error profile not found")
+        }
+    }
+    
     private let exitButton: UIButton = {
         let button = UIButton()
         let image = UIImage(named: "exit")
@@ -117,15 +127,6 @@ final class ProfileViewController: UIViewController {
             descriptionLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor)])
     }
     
-    func updateProfileDetails(profile: Profile?) {
-        if let profile = profile {
-            nameLabel.text = profile.name
-            userNameLabel.text = profile.loginName
-            descriptionLabel.text = profile.bio
-        } else {
-            print("Error profile not found")
-        }
-    }
     
     @objc
     private  func didTapBackButton() {
@@ -134,7 +135,7 @@ final class ProfileViewController: UIViewController {
         let yesAction = UIAlertAction(title: "Да", style: .default) { _ in
             OAuth2TokenStorage.shared.clean()
             WebViewViewController.clean()
-            CleanCache.clean()
+            CacheManager.clean()
             
             guard let window = UIApplication.shared.windows.first else {
                 assertionFailure("invalid configuration")

@@ -13,30 +13,6 @@ final class ProfileService {
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
     
-    private func loadProfile(from result: ProfileResult) -> Profile {
-        let name = "\(result.firstName ?? "") \(result.lastName ?? "")"
-        let  loginName = "@\(result.userName ?? "")"
-        
-        let profile = Profile(
-            userName: result.userName ?? "",
-            name: name,
-            loginName: loginName,
-            bio: result.bio ?? ""
-        )
-        return profile
-    }
-    
-    private func profileRequest(token: String) -> URLRequest? {
-        guard let url = URL(string:"https://api.unsplash.com/me") else {
-            return nil
-        }
-        var request = URLRequest(url:url)
-        request.httpMethod = "GET"
-        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        return request
-    }
-    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         task?.cancel()
         if task != nil {
@@ -66,6 +42,30 @@ final class ProfileService {
         }
         self.task = task
         task.resume()
+    }
+    
+    private func loadProfile(from result: ProfileResult) -> Profile {
+        let name = "\(result.firstName ?? "") \(result.lastName ?? "")"
+        let  loginName = "@\(result.userName ?? "")"
+        
+        let profile = Profile(
+            userName: result.userName ?? "",
+            name: name,
+            loginName: loginName,
+            bio: result.bio ?? ""
+        )
+        return profile
+    }
+    
+    private func profileRequest(token: String) -> URLRequest? {
+        guard let url = URL(string:"https://api.unsplash.com/me") else {
+            return nil
+        }
+        var request = URLRequest(url:url)
+        request.httpMethod = "GET"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        return request
     }
 }
 
