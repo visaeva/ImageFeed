@@ -38,6 +38,16 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
     
+    func updateProfileDetails(profile: Profile?) {
+        if let profile = profile {
+            nameLabel.text = profile.name
+            userNameLabel.text = profile.loginName
+            descriptionLabel.text = profile.bio
+        } else {
+            print("Error profile not found")
+        }
+    }
+    
     private let exitButton: UIButton = {
         let button = UIButton()
         let image = UIImage(named: "exit")
@@ -58,17 +68,8 @@ final class ProfileViewController: UIViewController {
         
         avatarImageView.kf.setImage(with: url,
                                     placeholder: UIImage(named: "placeholder"),
-                                    options: [.processor(processor), .transition(.fade(1))])
-    }
-    
-    func updateProfileDetails(profile: Profile?) {
-        if let profile = profile {
-            nameLabel.text = profile.name
-            userNameLabel.text = profile.loginName
-            descriptionLabel.text = profile.bio
-        } else {
-            print("Ошибка profile не найден")
-        }
+                                    options: [.processor(processor),
+                                              .transition(.fade(1))])
     }
     
     private func setupViews() {
@@ -126,17 +127,29 @@ final class ProfileViewController: UIViewController {
             descriptionLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor)])
     }
     
+    
     @objc
     private  func didTapBackButton() {
-        for view in view.subviews {
-            if view is UILabel {
-                view.removeFromSuperview()
+        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
+        
+        let yesAction = UIAlertAction(title: "Да", style: .default) { _ in
+            OAuth2TokenStorage.shared.clean()
+            WebViewViewController.clean()
+            CacheManager.clean()
+            
+            guard let window = UIApplication.shared.windows.first else {
+                assertionFailure("invalid configuration")
+                return
             }
+            window.rootViewController = SplashViewController()
+            window.makeKeyAndVisible()
         }
-    }
-    deinit {
-        if let observer = profileImageServiceObserver {
-            NotificationCenter.default.removeObserver(observer)
+        
+        let noAction = UIAlertAction(title: "Нет", style: .default) { _ in
+            alert.dismiss(animated: true)
         }
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        present(alert, animated: true)
     }
 }

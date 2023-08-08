@@ -1,14 +1,14 @@
 //
-//  ProfileStruct.swift
+//  ProfileResult.swift
 //  ImageFeed
 //
-//  Created by Victoria Isaeva on 31.07.2023.
+//  Created by Victoria Isaeva on 06.08.2023.
 //
 
 import Foundation
 
 struct ProfileResult: Codable {
-    var userName:String?
+    var userName: String?
     var firstName: String?
     var lastName: String?
     var bio: String?
@@ -19,11 +19,4 @@ struct ProfileResult: Codable {
         case lastName = "last_name"
         case bio
     }
-}
-
-struct Profile {
-    var userName: String?
-    var name: String?
-    var loginName: String?
-    var bio: String?
 }

@@ -18,12 +18,12 @@ final class ProfileService {
         if task != nil {
             return
         }
-        guard let request = profileRequest(token:token) else {
+        guard let request = profileRequest(token: token) else {
             assertionFailure("Invalid request")
             completion(.failure(NetworkError.invalidRequest))
             return
         }
-        let task = urlSession.objectTask(for:request) { [ weak self ] (response:Result<ProfileResult, Error>) in
+        let task = urlSession.objectTask(for: request) { [ weak self ] (response: Result<ProfileResult, Error>) in
             self?.task = nil
             switch response {
             case .success(let profileResult):

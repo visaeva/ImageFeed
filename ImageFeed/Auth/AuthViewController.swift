@@ -12,9 +12,9 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-    private let webViewIdentifier = "ShowWebView"
     static let storyboardID = "AuthViewController"
     weak var delegate: AuthViewControllerDelegate?
+    private let webViewIdentifier = "ShowWebView"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,20 +37,7 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        
-        OAuth2Service.shared.fetchOAuthToken(code) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let authToken):
-                OAuth2TokenStorage.shared.token = authToken
-            case .failure(let error):
-                print("Ошибка получения токена: \(error)")
-            }
-            DispatchQueue.main.async {
-                self.delegate?.authViewController(self, didAuthenticateWithCode: code)
-            }
-        }
+        delegate?.authViewController(self, didAuthenticateWithCode: code)
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
