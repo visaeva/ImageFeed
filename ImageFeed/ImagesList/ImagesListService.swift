@@ -17,7 +17,7 @@ final class ImagesListService {
     private let dateFormatter = ISO8601DateFormatter()
     private var page: Int = 1
     
-    private init() {}
+    public init() {}
     
     func fetchPhotosNextPage() {
         assert(Thread.isMainThread)

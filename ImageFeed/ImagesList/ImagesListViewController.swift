@@ -7,11 +7,23 @@
 
 import UIKit
 
-final class ImagesListViewController: UIViewController {
+protocol ImagesListViewControllerProtocol: AnyObject {
+    var presenter: ImagesListViewPresenterProtocol? { get set }
+    var photos: [Photo] { get set }
+    func updateTableViewAnimated()
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath)
+}
+
+final class ImagesListViewController: UIViewController, ImagesListViewControllerProtocol {
+    lazy var presenter: ImagesListViewPresenterProtocol? = {
+        return ImagesListViewPresenter()
+    } ()
+    
+    var photos: [Photo] = []
     private let showSingleImageSegueIdentifire = "ShowSingleImage"
     private var imagesListServiceObserver: NSObjectProtocol?
     private let imagesListService = ImagesListService.shared
-    private var photos: [Photo] = []
+    private let alertManager = AlertManager.shared
     
     @IBOutlet private var tableView: UITableView!
     
@@ -21,10 +33,8 @@ final class ImagesListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        setupTableView()
-        notifications()
-        imagesListService.fetchPhotosNextPage()
+        presenter?.viewDidLoad()
+        presenter?.view = self
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -72,7 +82,7 @@ extension ImagesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row + 1 == photos.count {
-            imagesListService.fetchPhotosNextPage()
+            presenter?.checkCompletedList(indexPath)
         }
     }
     
@@ -92,8 +102,9 @@ extension ImagesListViewController: UITableViewDelegate {
 extension ImagesListViewController {
     func updateTableViewAnimated() {
         let oldCount = photos.count
-        let newCount = imagesListService.photos.count
-        photos = imagesListService.photos
+        guard let newCount = presenter?.imagesListService.photos.count else { return }
+        guard let newPhotos = presenter?.imagesListService.photos else { return}
+        photos = newPhotos
         if oldCount != newCount {
             tableView.performBatchUpdates {
                 let indexPaths = (oldCount..<newCount).map { i in
@@ -105,22 +116,6 @@ extension ImagesListViewController {
     }
 }
 
-// MARK: Notification
-
-extension ImagesListViewController{
-    private func notifications() {
-        imagesListServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ImagesListService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [ weak self ] _ in
-                guard let self = self else { return }
-                self.updateTableViewAnimated()
-            }
-    }
-}
-
 extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
@@ -128,24 +123,25 @@ extension ImagesListViewController: ImagesListCellDelegate {
         
         UIBlockingProgressHUD.show()
         
-        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [ weak self ] result in
+        presenter?.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [ weak self ] result in
             guard let self else { return }
             
             switch result {
             case .success:
-                self.photos = self.imagesListService.photos
+                guard let newPhotos = self.presenter?.imagesListService.photos else { return }
+                self.photos = newPhotos
                 cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
                 UIBlockingProgressHUD.dismiss()
                 
             case .failure(let error):
+                self.showLikeErrorAlert(with: error)
                 UIBlockingProgressHUD.dismiss()
-                let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так(", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "Ок", style: .default)
-                
-                alert.addAction(okAction)
-                present(alert, animated: true)
-                print(error.localizedDescription)
             }
         }
+    }
+    
+    func showLikeErrorAlert(with error: Error)  {
+        let alert = alertManager.likeAlert(with: Error.self as! Error)
+        present(alert, animated: true, completion: nil)
     }
 }

@@ -17,7 +17,7 @@ final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     
     @IBOutlet private var cellImage: UIImageView!
-    @IBOutlet private var likeButton: UIButton!
+    @IBOutlet var likeButton: UIButton!
     @IBOutlet private var dateLabel: UILabel!
     
     override func prepareForReuse() {
@@ -39,15 +39,15 @@ final class ImagesListCell: UITableViewCell {
         cellImage.kf.indicatorType = .activity
         
         let placeholderImage = UIImage(named: "placeholderImage")
-        cellImage.kf.setImage(with: url, placeholder: placeholderImage) { result in
+        cellImage.kf.setImage(with: url, placeholder: placeholderImage) { [ weak self ] result in
             
             switch result {
             case .success(let image):
-                self.cellImage.contentMode = .scaleAspectFill
-                self.cellImage.image = image.image
+                self?.cellImage.contentMode = .scaleAspectFill
+                self?.cellImage.image = image.image
             case .failure(let error):
                 print("Ошибка загрузки картинки: \(error)")
-                self.cellImage.image = UIImage(named: "placeholderImage")
+                self?.cellImage.image = UIImage(named: "placeholderImage")
             }
         }
         dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())

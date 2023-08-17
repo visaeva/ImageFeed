@@ -8,7 +8,17 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+public protocol ProfileViewControllerProtocol: AnyObject {
+    var presenter: ProfileViewPresenterProtocol? { get set }
+    func updateAvatar(url: URL)
+    func nameLabel(_ name: String)
+    func userNameLabel(_ userName:String)
+    func descriptionLabel(_ description: String)
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
+    var presenter: ProfileViewPresenterProtocol?
+    
     private var avatarImageView = UIImageView()
     private var nameLabel = UILabel()
     private var descriptionLabel = UILabel()
@@ -19,50 +29,30 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presenter = ProfileViewPresenter(view: self)
         
         setupViews()
         setupConstraints()
-        updateProfileDetails(profile: profileService.profile)
+        presenter.updateProfileDetails(profile: profileService.profile)
         
         view.backgroundColor = UIColor(named: "YP Black")
         
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [ weak self ] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        presenter.updateAvatar()
     }
     
-    func updateProfileDetails(profile: Profile?) {
-        if let profile = profile {
-            nameLabel.text = profile.name
-            userNameLabel.text = profile.loginName
-            descriptionLabel.text = profile.bio
-        } else {
-            print("Error profile not found")
-        }
+    func nameLabel(_ name: String) {
+        nameLabel.text = name
     }
     
-    private let exitButton: UIButton = {
-        let button = UIButton()
-        let image = UIImage(named: "exit")
-        button.setImage(image, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    func userNameLabel(_ userName: String) {
+        userNameLabel.text = userName
+    }
     
-    private func updateAvatar() {
-        guard let profileImage = ProfileImageService.shared.avatarURL,
-              let url = URL(string: profileImage)
-        else { return }
-        let cache = ImageCache.default
-        cache.clearDiskCache()
-        
+    func descriptionLabel(_ description: String) {
+        descriptionLabel.text = description
+    }
+    
+    func updateAvatar(url: URL) {
         avatarImageView.kf.setImage(with: url)
         let processor = RoundCornerImageProcessor(cornerRadius: 42)
         
@@ -70,7 +60,18 @@ final class ProfileViewController: UIViewController {
                                     placeholder: UIImage(named: "placeholder"),
                                     options: [.processor(processor),
                                               .transition(.fade(1))])
+        let cache = ImageCache.default
+        cache.clearDiskCache()
     }
+    
+    private let exitButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(named: "exit")
+        button.accessibilityIdentifier = "exit"
+        button.setImage(image, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
     private func setupViews() {
         avatarImageView.image = profileImage
@@ -127,12 +128,9 @@ final class ProfileViewController: UIViewController {
             descriptionLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor)])
     }
     
-    
     @objc
     private  func didTapBackButton() {
-        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
-        
-        let yesAction = UIAlertAction(title: "Да", style: .default) { _ in
+        AlertManager.showExitConfirmationAlert(on: self) {
             OAuth2TokenStorage.shared.clean()
             WebViewViewController.clean()
             CacheManager.clean()
@@ -144,12 +142,6 @@ final class ProfileViewController: UIViewController {
             window.rootViewController = SplashViewController()
             window.makeKeyAndVisible()
         }
-        
-        let noAction = UIAlertAction(title: "Нет", style: .default) { _ in
-            alert.dismiss(animated: true)
-        }
-        alert.addAction(yesAction)
-        alert.addAction(noAction)
-        present(alert, animated: true)
     }
 }
+

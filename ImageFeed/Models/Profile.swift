@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Profile {
+public struct Profile {
     var userName: String?
     var name: String?
     var loginName: String?

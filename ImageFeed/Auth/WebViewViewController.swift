@@ -22,7 +22,6 @@ public protocol WebViewViewControllerProtocol: AnyObject {
 
 final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
     var presenter: WebViewPresenterProtocol?
-    
     weak var delegate: WebViewViewControllerDelegate?
     
     @IBOutlet private var webView: WKWebView!
@@ -34,7 +33,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
         
         webView.navigationDelegate = self
         presenter?.viewDidLoad()
-        
+        webView.accessibilityIdentifier = "UnsplashWebView"
     }
     
     override func viewWillAppear(_ animated: Bool) {
