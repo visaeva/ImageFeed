@@ -23,6 +23,7 @@ final class ImagesListCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         cellImage.kf.cancelDownloadTask()
+        likeButton.accessibilityIdentifier = "noLike"
     }
     
     func setupCell(from photo: Photo) {
