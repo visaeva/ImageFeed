@@ -25,14 +25,6 @@ final class ImagesListCell: UITableViewCell {
         cellImage.kf.cancelDownloadTask()
     }
     
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter
-    } ()
-    
     func setupCell(from photo: Photo) {
         
         let url = URL(string: photo.smallImageURL)
@@ -50,7 +42,7 @@ final class ImagesListCell: UITableViewCell {
                 self?.cellImage.image = UIImage(named: "placeholderImage")
             }
         }
-        dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
+        dateLabel.text = DateFormatterManager.shared.dateFormatter.string(from: photo.createdAt ?? Date())
         setIsLiked(isLiked: photo.isLiked)
     }
     

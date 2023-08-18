@@ -17,4 +17,10 @@ class DateFormatterManager {
         formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
+    
+    lazy var iso8601DateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
 }

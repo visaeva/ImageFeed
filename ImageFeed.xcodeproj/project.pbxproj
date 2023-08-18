@@ -261,6 +261,7 @@
 		4C2D8D1B2A20F20400423B88 /* ImageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				4CAD8F7F2A8F851800D6C757 /* DateFormatterManager */,
 				4C265ADA2A8A65C100E87648 /* AlertManager */,
 				4C265AD92A8A659400E87648 /* Helpers */,
 				4C5F2ABA2A8008EF00C121BB /* Models */,
@@ -280,7 +281,6 @@
 				4C2D8D222A20F20400423B88 /* Main.storyboard */,
 				4C2D8D272A20F20700423B88 /* LaunchScreen.storyboard */,
 				4C2D8D2A2A20F20700423B88 /* Info.plist */,
-				4C265AB52A892D2000E87648 /* DateFormatterManager.swift */,
 			);
 			path = ImageFeed;
 			sourceTree = "<group>";
@@ -397,6 +397,14 @@
 				4CA9F1742A373EC200FFEFA3 /* SingleImageViewController.swift */,
 			);
 			path = SingleImageView;
+			sourceTree = "<group>";
+		};
+		4CAD8F7F2A8F851800D6C757 /* DateFormatterManager */ = {
+			isa = PBXGroup;
+			children = (
+				4C265AB52A892D2000E87648 /* DateFormatterManager.swift */,
+			);
+			path = DateFormatterManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
