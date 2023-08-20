@@ -76,7 +76,9 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     }
     
     @IBAction private func didTapBackButton(_ sender: Any?) {
-        delegate?.webViewViewControllerDidCancel(self) }
+        delegate?.webViewViewControllerDidCancel(self)
+        CacheManager.cleanCache()
+    }
 }
 
 extension WebViewViewController: WKNavigationDelegate {
@@ -96,16 +98,5 @@ extension WebViewViewController: WKNavigationDelegate {
             return presenter?.code(from: url)
         }
         return nil
-    }
-}
-
-extension WebViewViewController {
-    static func clean() {
-        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
-            records.forEach { record in
-                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
-            }
-        }
     }
 }

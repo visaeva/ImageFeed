@@ -132,7 +132,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     private  func didTapBackButton() {
         AlertManager.showExitConfirmationAlert(on: self) {
             OAuth2TokenStorage.shared.clean()
-            WebViewViewController.clean()
+            CacheManager.cleanCache()
             CacheManager.clean()
             
             guard let window = UIApplication.shared.windows.first else {
