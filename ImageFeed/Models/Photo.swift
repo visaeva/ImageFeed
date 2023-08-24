@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Photo {
+public struct Photo {
     let id: String
     let size: CGSize
     let createdAt: Date?
@@ -16,7 +16,7 @@ struct Photo {
     let largeImageURL: String
     let regularImageURL:String
     let smallImageURL:String
-    let isLiked: Bool
+    var isLiked: Bool
     
     init(_ photoResult: PhotoResult, date: ISO8601DateFormatter) {
         self.id = photoResult.id

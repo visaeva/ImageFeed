@@ -80,8 +80,9 @@
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cn4-BD-W0e" userLabel="LikeButton">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cn4-BD-W0e">
                                                     <rect key="frame" x="333" y="4" width="44" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="noLike"/>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="like">
                                                         <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.20207141694568453" colorSpace="custom" customColorSpace="calibratedRGB"/>
@@ -205,6 +206,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="npc-Od-kfO"/>
                     <connections>
+                        <outlet property="backButton" destination="abb-Xo-MmK" id="Yb0-aD-aMN"/>
                         <outlet property="imageView" destination="SFV-q4-33n" id="SsA-3y-p5u"/>
                         <outlet property="scrollView" destination="aM9-ac-OUp" id="NWj-bl-9AZ"/>
                     </connections>
@@ -228,9 +230,10 @@
                                     <constraint firstAttribute="height" constant="60" id="kL6-u7-MEF"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b4R-oF-ToB" userLabel="AuthButton">
+                            <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="Authenticate" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b4R-oF-ToB" userLabel="AuthButton">
                                 <rect key="frame" x="16" y="680" width="361" height="48"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <accessibility key="accessibilityConfiguration" identifier="Authenticate"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="0v3-1m-9Hb"/>
                                 </constraints>
@@ -268,7 +271,7 @@
         <!--Web View View Controller-->
         <scene sceneID="bRa-Dh-YgM">
             <objects>
-                <viewController id="aDb-5Z-T3a" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WebViewViewController" id="aDb-5Z-T3a" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="6Fl-nB-eos">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

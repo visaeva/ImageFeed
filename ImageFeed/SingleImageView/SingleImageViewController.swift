@@ -11,13 +11,16 @@ final class SingleImageViewController: UIViewController {
     
     var image: URL?
     private var imageDownload: UIImage?
+    
     @IBOutlet private weak var scrollView: UIScrollView!
+    @IBOutlet weak var backButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         loadAndShowImage(url: image)
+        backButton.accessibilityIdentifier = "singleViewBackButton"
     }
     
     func loadAndShowImage(url: URL?) {

@@ -14,10 +14,9 @@ final class ImagesListService {
     private var currentTask: URLSessionTask?
     private var lastLoadedPage: Int?
     private let urlSession = URLSession.shared
-    private let dateFormatter = ISO8601DateFormatter()
     private var page: Int = 1
     
-    private init() {}
+    public init() {}
     
     func fetchPhotosNextPage() {
         assert(Thread.isMainThread)
@@ -45,7 +44,7 @@ final class ImagesListService {
                     } else {
                         self.lastLoadedPage! += 1
                     }
-                    let newPhotos = photoResults.map { Photo($0, date: self.dateFormatter) }
+                    let newPhotos = photoResults.map { Photo($0, date: DateFormatterManager.shared.iso8601DateFormatter) }
                     self.photos.append(contentsOf: newPhotos)
                     
                     NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: nil)
@@ -85,7 +84,7 @@ final class ImagesListService {
                                                                          ),
                                                          likedByUser: !photo.isLiked)
                         
-                        let newPhoto = Photo(newPhotoResult, date: self.dateFormatter)
+                        let newPhoto = Photo(newPhotoResult, date: DateFormatterManager.shared.iso8601DateFormatter)
                         
                         self.photos[index] = newPhoto
                         completion(.success(()))
